@@ -1,0 +1,167 @@
+@import "tailwindcss";
+
+/*
+ * Design system Linha Segura
+ * Conceito: "a linha" — um traço de luz ciano que percorre a página como
+ * um sinal seguro numa rede. Fundo profundo, luz controlada, um acento por vez.
+ */
+@theme {
+  --color-void: #070b12;
+  --color-navy: #0b1628;
+  --color-panel: #0e1b30;
+  --color-panel-2: #13233d;
+  --color-electric: #2563eb;
+  --color-electric-soft: #3b82f6;
+  --color-cyan: #00d4ff;
+  --color-snow: #f8fafc;
+  --color-steel: #94a3b8;
+  --color-steel-dim: #8492a8;
+  --color-ok: #34d399;
+  --color-warn: #fbbf24;
+  --color-danger: #f87171;
+
+  --font-display: var(--font-space-grotesk), "Segoe UI", system-ui, sans-serif;
+  --font-sans: var(--font-inter), "Segoe UI", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+  --radius-card: 1rem;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --animate-scan: scan 6s var(--ease-out-expo) infinite;
+  --animate-pulse-line: pulse-line 3.2s linear infinite;
+  --animate-blink: blink 1.4s steps(2, start) infinite;
+
+  @keyframes scan {
+    0% { transform: translateY(-10%); opacity: 0; }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
+    100% { transform: translateY(110%); opacity: 0; }
+  }
+  @keyframes pulse-line {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(400%); }
+  }
+  @keyframes blink {
+    to { visibility: hidden; }
+  }
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --header-h: 4.5rem;
+  }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--header-h) + 1rem);
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--color-void);
+    color: var(--color-snow);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+  p { text-wrap: pretty; }
+  ::selection { background: color-mix(in srgb, var(--color-cyan) 35%, transparent); }
+  :focus-visible {
+    outline: 2px solid var(--color-cyan);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .container-site {
+    width: 100%;
+    max-width: 78rem;
+    margin-inline: auto;
+    padding-left: max(1.25rem, env(safe-area-inset-left, 0px));
+    padding-right: max(1.25rem, env(safe-area-inset-right, 0px));
+  }
+  @media (min-width: 768px) {
+    .container-site { padding-left: 2rem; padding-right: 2rem; }
+  }
+
+  .section { padding-block: clamp(4.5rem, 10vw, 8.5rem); }
+
+  /* Traço de luz que corre por uma linha: a assinatura visual */
+  .signal-line {
+    position: relative;
+    height: 1px;
+    overflow: hidden;
+    background: linear-gradient(90deg, transparent, rgb(148 163 184 / 0.22) 15%, rgb(148 163 184 / 0.22) 85%, transparent);
+  }
+  .signal-line::after {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 25%;
+    background: linear-gradient(90deg, transparent, var(--color-cyan), transparent);
+    animation: var(--animate-pulse-line);
+  }
+
+  .grid-backdrop {
+    background-image:
+      linear-gradient(rgb(148 163 184 / 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(148 163 184 / 0.06) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 30%, transparent 75%);
+  }
+
+  .glass {
+    background: color-mix(in srgb, var(--color-void) 86%, transparent);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+  }
+
+  .text-gradient {
+    background: linear-gradient(100deg, var(--color-snow) 20%, var(--color-cyan) 70%, var(--color-electric-soft));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .field {
+    width: 100%;
+    min-height: 3rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgb(148 163 184 / 0.22);
+    background: rgb(7 11 18 / 0.6);
+    padding: 0.75rem 1rem;
+    color: var(--color-snow);
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .field::placeholder { color: var(--color-steel-dim); }
+  .field:hover { border-color: rgb(148 163 184 / 0.4); }
+  .field:focus-visible {
+    outline: none;
+    border-color: var(--color-cyan);
+    box-shadow: 0 0 0 3px rgb(0 212 255 / 0.18);
+  }
+  .field[aria-invalid="true"] { border-color: var(--color-danger); }
+
+  .prose-site h2 { font-size: 1.5rem; margin-top: 2.5rem; margin-bottom: 0.75rem; }
+  .prose-site p, .prose-site li { color: var(--color-steel); }
+  .prose-site ul { list-style: disc; padding-left: 1.25rem; display: grid; gap: 0.35rem; }
+  .prose-site strong { color: var(--color-snow); }
+}
